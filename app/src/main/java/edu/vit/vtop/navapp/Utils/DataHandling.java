@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.lang.reflect.Type;
 
@@ -12,11 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.vit.vtop.navapp.NetworkUtils.NetworkUtil;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DataHandling {
     public static void saveList(List<DataModel> saveLike, Context context){

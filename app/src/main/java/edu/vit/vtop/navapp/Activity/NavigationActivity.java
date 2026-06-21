@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -17,15 +16,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,7 +34,6 @@ import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
@@ -56,14 +51,11 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
 
     private GoogleMap mMap;
     private ActivityNavigationBinding binding;
-    private TextView name,address;
     private ImageView cancel;
     DataModel marker_model;
     private CardView go;
     double lat,lng,ulat,ulng;
     private ProgressDialog progressDialog;
-    private String jokes[],jokes2[];
-    private String joke;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +63,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
         binding = ActivityNavigationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        jokes = new String[]{"Loading your Route","Hot day ? You should try the cocoa coffee at FC",
+        String[] jokes = new String[]{"Loading your Route", "Hot day ? You should try the cocoa coffee at FC",
                 "The challenge with being faster than light, is you still have to wait on loading pages",
                 "Get some shade while we locate your destination",
                 "Bored ? The nearest Nescafe could be your pitstop to find a friend",
@@ -80,8 +72,8 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
                 "Looking for birthday cakes ? You might wanna step into DC"};
 
         int index = (int) (Math.random() * (jokes.length-1));
-        joke = jokes[index];
-        jokes2=new String[]{
+        String joke = jokes[index];
+        String[] jokes2 = new String[]{
                 "VIT has 35,000 students from 54 different countries and from all the states of India",
                 "VIT has a sustainably designed building with natural ventilation",
                 "VIT has a life sized tank perched right next to Amul, where you'd probably want to try the raspberry stick ",
@@ -89,7 +81,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
         };
         binding.pleaseWaitText.setText(joke);
         int index2;
-        index2=(int) (Math.random() * (jokes.length-1));;
+        index2=(int) (Math.random() * (jokes.length-1));
         binding.fact.setText(jokes[index2]);
 
         Intent i = getIntent();
@@ -134,8 +126,8 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
         });
     }
     private void findID(){
-        name=findViewById(R.id.navDestination);
-        address=findViewById(R.id.navAddress);
+        TextView name = findViewById(R.id.navDestination);
+        TextView address = findViewById(R.id.navAddress);
         cancel=findViewById(R.id.navCancel);
         go=findViewById(R.id.navGo);
     }
@@ -200,7 +192,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
         LatLng user = new LatLng(ulat,ulng);
 
 
-        int vector = 0;
+        int vector;
         switch (marker_model.getCategory()) {
             case "Academic Blocks":
                 vector = R.drawable.ic_marker_academic;

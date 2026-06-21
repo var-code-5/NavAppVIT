@@ -13,22 +13,21 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.util.Objects;
+
 import edu.vit.vtop.navapp.R;
 
 public class Appearance extends AppCompatActivity {
-    private RadioGroup radioGroupThemeChanger;
-    private RadioButton radioButtonLight, radioButtonDark;
-    private ImageView back;
     private int flag=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appearance);
         SharedPreferences.Editor editor = getSharedPreferences("edu.vit.vtop.navapp", MODE_PRIVATE).edit();
-        radioGroupThemeChanger = findViewById(R.id.radio_group_theme_changer);
-        radioButtonLight = findViewById(R.id.rb_light_mode);
-        radioButtonDark = findViewById(R.id.rb_dark_mode);
-        back = findViewById(R.id.noti_back);
+        RadioGroup radioGroupThemeChanger = findViewById(R.id.radio_group_theme_changer);
+        RadioButton radioButtonLight = findViewById(R.id.rb_light_mode);
+        RadioButton radioButtonDark = findViewById(R.id.rb_dark_mode);
+        ImageView back = findViewById(R.id.noti_back);
 
         SharedPreferences.Editor edi = getSharedPreferences("edu.vit.vtop.navapp", MODE_PRIVATE).edit();
         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
@@ -88,7 +87,7 @@ public class Appearance extends AppCompatActivity {
             });
         }
         catch (Exception e){
-            Log.i("Theme error", e.getMessage());
+            Log.i("Theme error", Objects.requireNonNull(e.getMessage()));
         }
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +104,7 @@ public class Appearance extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Log.i("flag",String.valueOf(flag));
         if(flag == 0){
             finish();

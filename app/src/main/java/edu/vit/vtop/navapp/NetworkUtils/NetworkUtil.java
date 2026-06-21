@@ -1,5 +1,7 @@
 package edu.vit.vtop.navapp.NetworkUtils;
 
+import edu.vit.vtop.navapp.BuildConfig;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -10,14 +12,13 @@ public class NetworkUtil {
     public static OkHttpClient getClientInstance() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-//                .addInterceptor(interceptor)
+//                        .addInterceptor(interceptor)
+        return new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
                 .build();
-        return client;
     }
-        public static String baseURL = "http://14.139.180.151/";
         public static Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseURL)
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(getClientInstance())
                 .addConverterFactory(GsonConverterFactory.create()).build();
 

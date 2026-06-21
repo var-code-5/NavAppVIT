@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -17,17 +16,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.vit.vtop.navapp.NetworkUtils.NetworkUtil;
 import edu.vit.vtop.navapp.R;
 import edu.vit.vtop.navapp.Recyclerview.PlacesAdapter;
-import edu.vit.vtop.navapp.Utils.DataHandling;
 import edu.vit.vtop.navapp.Utils.DataModel;
-import edu.vit.vtop.navapp.Utils.VersionModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,7 +30,6 @@ import retrofit2.Response;
 public class CategoryActivity extends AppCompatActivity {
 
     private List<DataModel> list, sortedList;
-    private ImageView back, cancel;
     private ProgressBar progressBar;
     double ulat,ulng;
     boolean isUserLocationNull = true;
@@ -114,8 +108,8 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     public void setOnclick() {
-        back = findViewById(R.id.categoryBack);
-        cancel = findViewById(R.id.categoryCancel);
+        ImageView back = findViewById(R.id.categoryBack);
+        ImageView cancel = findViewById(R.id.categoryCancel);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
