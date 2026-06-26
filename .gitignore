@@ -16,5 +16,6 @@
 .cxx
 local.properties
 .idea
-/keys.jks
+/app/keys.jks
 /private_key.pepk
+/key.properties

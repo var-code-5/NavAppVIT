@@ -10,21 +10,24 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import edu.vit.vtop.navapp.BuildConfig;
+
 public interface NetworkAPIs {
+    String AUTH_TOKEN = BuildConfig.AUTH_TOKEN;
 
     @GET("api/getIndependent")
-    @Headers({"auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDYzMjg1NDN9.eoQ2xDM6InHlCyUtNeWvUD4YnqT7_8Df-LPWUqEmv6E"})
+    @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> getIndependent();
 
     @GET("api/version")
-    @Headers({"auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDYzMjg1NDN9.eoQ2xDM6InHlCyUtNeWvUD4YnqT7_8Df-LPWUqEmv6E"})
+    @Headers({"auth-token: " + AUTH_TOKEN})
     Call<VersionModel> getVersion();
 
     @GET("api/getByCategory/{id}")
-    @Headers({"auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDYzMjg1NDN9.eoQ2xDM6InHlCyUtNeWvUD4YnqT7_8Df-LPWUqEmv6E"})
+    @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> getCategory(@Path("id") String category);
 
     @GET("api/search")
-    @Headers({"auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDYzMjg1NDN9.eoQ2xDM6InHlCyUtNeWvUD4YnqT7_8Df-LPWUqEmv6E"})
+    @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> search(@Query("sk") String key);
 }
