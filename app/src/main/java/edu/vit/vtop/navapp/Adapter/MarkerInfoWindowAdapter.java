@@ -15,7 +15,7 @@ import edu.vit.vtop.navapp.R;
 import edu.vit.vtop.navapp.Utils.DataModel;
 
 public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-    private Context context;
+    private final Context context;
     List<DataModel> markers;
     public MarkerInfoWindowAdapter(Context context,List<DataModel> markers) {
         this.context = context.getApplicationContext();

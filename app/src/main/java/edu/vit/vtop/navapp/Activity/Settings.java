@@ -17,18 +17,15 @@ import edu.vit.vtop.navapp.RecyclerviewModels.SettingsModel;
 
 public class Settings extends AppCompatActivity {
 
-    private RecyclerView recy2,recy3;
-    private List<SettingsModel> lst3,lst2;
-    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        lst3 = new ArrayList<>();
-        lst2 = new ArrayList<>();
-        context = Settings.this;
-        recy2 = findViewById(R.id.rcy2);
-        recy3=findViewById(R.id.rcy3);
+        List<SettingsModel> lst3 = new ArrayList<>();
+        List<SettingsModel> lst2 = new ArrayList<>();
+        Context context = Settings.this;
+        RecyclerView recy2 = findViewById(R.id.rcy2);
+        RecyclerView recy3 = findViewById(R.id.rcy3);
 
         recy2.setLayoutManager(new LinearLayoutManager(context));
         recy3.setLayoutManager(new LinearLayoutManager(context));
@@ -39,16 +36,17 @@ public class Settings extends AppCompatActivity {
         lst2.add(new SettingsModel(R.drawable.ic_ig,"Our Instagram"));
         lst2.add(new SettingsModel(R.drawable.ic_fb,"Our Facebook"));
 
-        recy2.setAdapter(new SettingsAdapter(context,lst2));
+        recy2.setAdapter(new SettingsAdapter(context, lst2));
 
         lst3.add(new SettingsModel(R.drawable.ic_privacy,"Privacy Policy"));
         lst3.add(new SettingsModel(R.drawable.ic_aboutus,"About Us"));
 
-        recy3.setAdapter(new SettingsAdapter(context,lst3));
+        recy3.setAdapter(new SettingsAdapter(context, lst3));
     }
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         startActivity(new Intent(Settings.this,HomeActivity.class));
         finish();
 

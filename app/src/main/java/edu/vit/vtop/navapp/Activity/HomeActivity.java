@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -38,7 +37,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -55,7 +53,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import edu.vit.vtop.navapp.Adapter.MarkerInfoWindowAdapter;
 import edu.vit.vtop.navapp.NetworkUtils.NetworkUtil;
@@ -90,6 +87,24 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Create a LatLngBounds that includes the VIT Campus bounds
     private LatLngBounds vitBounds;
     //    SharedPreferences.Editor editor;
+    private static final int REQUEST_CODE = 100;
+    private void checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_CODE);
+            } else {
+                Log.i("Permissions", "READ_MEDIA_IMAGES permission already granted.");
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+            } else {
+                Log.i("Permissions", "READ_EXTERNAL_STORAGE permission already granted.");
+            }
+        } else {
+            Log.i("Permissions", "No runtime permissions required for this version.");
+        }
+    }
     private ProgressDialog progressDialog;
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -127,6 +142,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Manifest.permission.ACCESS_COARSE_LOCATION
 
             });
+            checkAndRequestPermissions();
 
             // get the bottom sheet view
             bottomSheetLayout = findViewById(R.id.bottom_sheet);
@@ -316,13 +332,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setInfoWindowAdapter(markerInfoWindowAdapter);
 
         for(DataModel e: markers) {
-
-            int vector = 0;
+            int vector;
             switch (e.getCategory()) {
-                case "Academic Blocks":
-                    vector = R.drawable.ic_marker_academic;
-                    break;
-
                 case "Hostel Blocks":
                     vector = R.drawable.ic_marker_hostel;
                     break;
@@ -386,7 +397,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (!vitBounds.contains(new LatLng(lkl.getLatitude(),lkl.getLongitude()))) {
                             SharedPreferences pref = getSharedPreferences("edu.vit.vtop.navapp",MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
-                            editor.putBoolean("isOnCampus",false).commit();
+                            editor.putBoolean("isOnCampus",false).apply();
                             editor.apply();
                         }
 
@@ -394,7 +405,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                         {
                             SharedPreferences pref = getSharedPreferences("edu.vit.vtop.navapp",MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
-                            editor.putBoolean("isOnCampus",true).commit();
+                            editor.putBoolean("isOnCampus",true).apply();
                             editor.apply();
                             mMap.setMyLocationEnabled(true);
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -412,32 +423,28 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                for(DataModel e : markers)
-                {
-                    // The case when, we click on one marker to show the info window, and then click on another. This would keep the e.getInfoShown() to true.
-                    if((marker.getPosition().longitude != e.getLon() || marker.getPosition().latitude != e.getLat()) && e.getInfoShown())
+                try {
+                    for(DataModel e : markers)
                     {
-                        e.setInfoShown(false);
-                    }
-                }
-                for(DataModel e : markers)
-                {
-                    if(marker.getPosition().longitude == e.getLon() && marker.getPosition().latitude == e.getLat())
-                    {
-                        if(!e.getInfoShown())
+                        // The case when, we click on one marker to show the info window, and then click on another. This would keep the e.getInfoShown() to true.
+                        if((marker.getPosition().longitude != e.getLon() || marker.getPosition().latitude != e.getLat()) && e.getInfoShown())
                         {
-                            marker.showInfoWindow();
-                            e.setInfoShown(true);
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(e.getLat(), e.getLon()), 18f));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(e.getLat(), e.getLon()), 16.5f));
-                            //When we return false in onMarkerClick(), it performs its default function of showingInfoWindow and centering the map into the marker
-                            return false;
-//                                LatLng coordinate = new LatLng(e.getLon(), e.getLat());
-//                                CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 11.0f);
-//                                mMap.animateCamera(yourLocation);
+                            e.setInfoShown(false);
                         }
-                        else
+                    }
+                    for(DataModel e : markers)
+                    {
+                        if(marker.getPosition().longitude == e.getLon() && marker.getPosition().latitude == e.getLat())
                         {
+                            if(!e.getInfoShown())
+                            {
+                                marker.showInfoWindow();
+                                e.setInfoShown(true);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(e.getLat(), e.getLon()), 16.5f));
+                                return false;
+                            }
+                            else
+                            {
                             locationPermissionRequest.launch(new String[]{
                                     Manifest.permission.ACCESS_FINE_LOCATION,
                                     Manifest.permission.ACCESS_COARSE_LOCATION
@@ -480,6 +487,9 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                         }
                     }
+                }} catch (Exception e) {
+                    Log.e("HomeActivity", "Error in marker click: " + e.getMessage(), e);
+                    Toast.makeText(HomeActivity.this, "Error processing location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
@@ -618,7 +628,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String searchString = search.getText().toString();
-                if(searchString==""){
+                if(searchString.isEmpty()){
                     cat.setVisibility(View.VISIBLE);
                     plac.setText("Places");
                     places.setVisibility(View.VISIBLE);
@@ -646,7 +656,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String searchString = search.getText().toString();
                 searchRecyclerview.setVisibility(View.GONE);
                 noResult.setVisibility(View.INVISIBLE);
-                if(searchString.equals("")){
+                if(searchString.isEmpty()){
                     progressBar.setVisibility(View.GONE);
                     cat.setVisibility(View.VISIBLE);
                     plac.setText("Places");
@@ -722,6 +732,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean doubleback;
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }else{

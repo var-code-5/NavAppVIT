@@ -3,54 +3,110 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
+def envProperties = new Properties()
+def envFile = rootProject.file(".env")
+if (envFile.exists()) {
+    envFile.withInputStream { envProperties.load(it) }
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def readConfigValue = { name ->
+    System.getenv(name) ?: envProperties.getProperty(name) ?: ""
+}
+
+def quoteBuildConfigString = { value ->
+    "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+}
+
+def mapsApiKey = readConfigValue("MAPS_API_KEY")
+def baseUrl = readConfigValue("BASE_URL")
+def authToken = readConfigValue("AUTH_TOKEN")
+
 android {
-    compileSdk 32
+
+    compileSdk(37)
 
     defaultConfig {
-        applicationId "edu.vit.vtop.navapp"
-        minSdk 21
-        targetSdk 32
-        versionCode 6
-        versionName "1.0.5"
+        namespace "edu.vit.vtop.navapp"
+        minSdk 24
+//        targetSdk 34
+        versionCode 8
+        versionName "1.0.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "map_key", mapsApiKey
+        buildConfigField "String", "BASE_URL", quoteBuildConfigString(baseUrl)
+        buildConfigField "String", "AUTH_TOKEN", quoteBuildConfigString(authToken)
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
     }
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
+    }
+}
+
+gradle.taskGraph.whenReady {
+    ["MAPS_API_KEY": mapsApiKey, "BASE_URL": baseUrl].each { name, value ->
+        if (value.trim().isEmpty()) {
+            throw new GradleException("${name} environment variable or .env entry is required.")
+        }
     }
 }
 
 dependencies {
 
-    def lottieVersion = "3.4.0"
+    def lottieVersion = "6.7.1"
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'com.google.android.gms:play-services-maps:20.0.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
 
 
     // Logging Interceptor
-    implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
+    implementation "com.squareup.okhttp3:logging-interceptor:5.4.0"
 
 
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

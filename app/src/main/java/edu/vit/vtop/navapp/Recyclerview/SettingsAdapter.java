@@ -84,7 +84,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 if (list.get(position).getText().equals("Our Instagram")){
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setData(Uri.parse("https://www.instagram.com/swcc_online/?utm_medium=copy_link"));
+                    intent.setData(Uri.parse("https://www.instagram.com/sw_vit/?utm_medium=copy_link"));
                     try {
                         context.startActivity(intent);
                     }catch (Exception e){

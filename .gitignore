@@ -1,6 +1,8 @@
 *.iml
 .gradle
 /local.properties
+.env
+/.vscode
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -14,3 +16,6 @@
 .cxx
 local.properties
 .idea
+/app/keys.jks
+/private_key.pepk
+/key.properties
