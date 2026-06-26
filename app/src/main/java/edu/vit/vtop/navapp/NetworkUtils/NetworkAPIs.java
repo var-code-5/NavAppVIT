@@ -15,7 +15,7 @@ import edu.vit.vtop.navapp.BuildConfig;
 public interface NetworkAPIs {
     String AUTH_TOKEN = BuildConfig.AUTH_TOKEN;
 
-    @GET("api/getIndependent")
+    @GET("api/destinations/getIndependent")
     @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> getIndependent();
 
@@ -23,11 +23,11 @@ public interface NetworkAPIs {
     @Headers({"auth-token: " + AUTH_TOKEN})
     Call<VersionModel> getVersion();
 
-    @GET("api/getByCategory/{id}")
+    @GET("api/destinations/getByCategory/{id}")
     @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> getCategory(@Path("id") String category);
 
-    @GET("api/search")
+    @GET("api/destinations/search")
     @Headers({"auth-token: " + AUTH_TOKEN})
     Call<List<DataModel>> search(@Query("sk") String key);
 }
